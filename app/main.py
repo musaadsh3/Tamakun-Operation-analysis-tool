@@ -54,11 +54,27 @@ def get_admin_session(request: Request) -> Optional[dict]:
 # ══════════════════════════════════════════════════════════════
 
 @app.get("/", response_class=HTMLResponse)
-def home(request: Request, db: Session = Depends(get_db)):
+def landing(request: Request):
+    admin = get_admin_session(request)
+    return templates.TemplateResponse("landing.html", {
+        "request": request, "admin": admin,
+    })
+
+
+@app.get("/analysis", response_class=HTMLResponse)
+def analysis_home(request: Request, db: Session = Depends(get_db)):
     brands = db.query(Brand).filter(Brand.is_active == True).all()
     admin = get_admin_session(request)
     return templates.TemplateResponse("home.html", {
         "request": request, "brands": brands, "admin": admin,
+    })
+
+
+@app.get("/operations", response_class=HTMLResponse)
+def operations_page(request: Request):
+    admin = get_admin_session(request)
+    return templates.TemplateResponse("operations.html", {
+        "request": request, "admin": admin,
     })
 
 

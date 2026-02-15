@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}تمكّن - الرئيسية{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero">
+        <h1>تمكّن</h1>
+        <p>اختر القسم المطلوب</p>
+    </div>
+
+    <div class="landing-grid">
+        <a href="/analysis" class="landing-card">
+            <div class="landing-icon">📊</div>
+            <h2>تحليل الطلبات</h2>
+            <p>تحليل وتصفية طلبات العلامات التجارية</p>
+        </a>
+
+        <a href="/operations" class="landing-card">
+            <div class="landing-icon">⚙️</div>
+            <h2>داشبورد التشغيل</h2>
+            <p>لوحة متابعة عمليات التشغيل</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

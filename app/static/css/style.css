@@ -272,8 +272,46 @@ body {
     margin-bottom: 0;
 }
 
-.multi-select {
-    min-height: 80px;
+/* ── Checkbox Multi-Select ───────────────────────────── */
+
+.checkbox-select {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem;
+    max-height: 180px;
+    overflow-y: auto;
+    background: var(--card-bg);
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.checkbox-option:hover {
+    background: rgba(108, 92, 231, 0.06);
+}
+
+.checkbox-option input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.checkbox-option input[type="checkbox"]:checked + span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.checkbox-option:has(input:checked) {
+    background: rgba(108, 92, 231, 0.08);
 }
 
 /* ── Buttons ─────────────────────────────────────────── */
@@ -491,6 +529,12 @@ body {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+}
+
+.date-preset-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
 }
 
 /* ── Page Header ─────────────────────────────────────── */
@@ -743,4 +787,83 @@ code {
     font-size: 0.85em;
     direction: ltr;
     display: inline-block;
+}
+
+/* ── Landing Page ───────────────────────────────────── */
+
+.landing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.landing-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 3rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.3s;
+    box-shadow: var(--shadow);
+}
+
+.landing-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(108, 92, 231, 0.18);
+}
+
+.landing-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.landing-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.landing-card p {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+/* ── Coming Soon ────────────────────────────────────── */
+
+.coming-soon-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.coming-soon-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+}
+
+.coming-soon-card h2 {
+    font-size: 1.75rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.coming-soon-card p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+    .landing-grid {
+        grid-template-columns: 1fr;
+    }
 }

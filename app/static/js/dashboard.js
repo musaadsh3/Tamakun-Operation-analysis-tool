@@ -46,11 +46,55 @@ if (dropZone) {
     });
 }
 
+// ── Status Filter (Checkbox Multi-Select) ──────────────
+function toggleAllStatuses(allCheckbox) {
+    const container = document.getElementById('statusFilter');
+    const checkboxes = container.querySelectorAll('input[name="status"]');
+    checkboxes.forEach(cb => {
+        cb.checked = allCheckbox.checked;
+    });
+}
+
+// When individual status checkboxes change, update "الكل" state
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('statusFilter');
+    if (container) {
+        const allCheckbox = container.querySelector('input[value="__all__"]');
+        const statusCheckboxes = container.querySelectorAll('input[name="status"]');
+        statusCheckboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                if (allCheckbox) {
+                    const allChecked = Array.from(statusCheckboxes).every(c => c.checked);
+                    allCheckbox.checked = allChecked;
+                }
+            });
+        });
+    }
+});
+
+function getSelectedStatuses() {
+    const container = document.getElementById('statusFilter');
+    const allCheckbox = container.querySelector('input[value="__all__"]');
+    if (allCheckbox && allCheckbox.checked) {
+        return []; // empty = all statuses
+    }
+    const checked = container.querySelectorAll('input[name="status"]:checked');
+    return Array.from(checked).map(cb => cb.value);
+}
+
 // ── Date Presets ────────────────────────────────────────
-function setDatePreset(days) {
+function setDatePreset(days, btnElement) {
     const dateTo = document.getElementById('dateTo');
     const dateFrom = document.getElementById('dateFrom');
     const customDiv = document.getElementById('customDays');
+
+    // Highlight active preset button
+    document.querySelectorAll('.date-preset-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
 
     if (days === 0) {
         customDiv.style.display = 'flex';
@@ -68,17 +112,18 @@ function setDatePreset(days) {
 function applyCustomDays() {
     const days = parseInt(document.getElementById('customDaysInput').value);
     if (days > 0) {
-        setDatePreset(days);
+        setDatePreset(days, null);
         document.getElementById('customDays').style.display = 'none';
+        // Highlight the "مخصص" button
+        const customBtn = document.querySelector('.date-preset-btn:last-child');
+        document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
+        if (customBtn) customBtn.classList.add('active');
     }
 }
 
 // ── Fetch from DB ──────────────────────────────────────
 async function fetchFromDb() {
-    const statusSelect = document.getElementById('statusFilter');
-    const selectedStatuses = Array.from(statusSelect.selectedOptions)
-        .map(o => o.value)
-        .filter(v => v);
+    const selectedStatuses = getSelectedStatuses();
 
     const formData = new FormData();
     formData.append('brand_key', window.BRAND_KEY);

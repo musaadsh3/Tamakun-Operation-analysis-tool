@@ -5,7 +5,7 @@
 <div class="container">
     <div class="page-header">
         <h1>{{ brand.name_ar }}</h1>
-        <a href="/" class="btn btn-secondary">← العودة للرئيسية</a>
+        <a href="/analysis" class="btn btn-secondary">← العودة للرئيسية</a>
     </div>
 
     <!-- Source Selection -->
@@ -21,12 +21,19 @@
             <div class="filters-row" style="margin-top:1rem;">
                 <div class="form-group">
                     <label>حالة الطلب</label>
-                    <select id="statusFilter" multiple class="multi-select">
+                    <div class="checkbox-select" id="statusFilter">
+                        <label class="checkbox-option">
+                            <input type="checkbox" value="__all__" onchange="toggleAllStatuses(this)">
+                            <span>الكل</span>
+                        </label>
                         {% for s in statuses %}
-                        <option value="{{ s }}">{{ s }}</option>
+                        <label class="checkbox-option">
+                            <input type="checkbox" value="{{ s }}" name="status">
+                            <span>{{ s }}</span>
+                        </label>
                         {% endfor %}
-                    </select>
-                    <small>اترك فارغاً لعرض الكل</small>
+                    </div>
+                    <small>اختر الحالات المطلوبة أو "الكل"</small>
                 </div>
 
                 <div class="form-group">
@@ -42,9 +49,9 @@
                 <div class="form-group">
                     <label>اختصارات التاريخ</label>
                     <div class="date-presets">
-                        <button type="button" class="btn btn-sm" onclick="setDatePreset(7)">آخر أسبوع</button>
-                        <button type="button" class="btn btn-sm" onclick="setDatePreset(30)">آخر شهر</button>
-                        <button type="button" class="btn btn-sm" onclick="setDatePreset(0)">مخصص</button>
+                        <button type="button" class="btn btn-sm date-preset-btn" onclick="setDatePreset(7, this)">آخر أسبوع</button>
+                        <button type="button" class="btn btn-sm date-preset-btn" onclick="setDatePreset(30, this)">آخر شهر</button>
+                        <button type="button" class="btn btn-sm date-preset-btn" onclick="setDatePreset(0, this)">مخصص</button>
                     </div>
                     <div id="customDays" style="display:none; margin-top:8px;">
                         <input type="number" id="customDaysInput" placeholder="عدد الأيام" min="1">
