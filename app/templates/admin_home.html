@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}تمكّن - لوحة التحكم{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>مرحباً {{ admin.name }}</h1>
+    </div>
+
+    <div class="admin-grid">
+        <a href="/admin/stores" class="admin-card">
+            <div class="admin-card-icon">🏪</div>
+            <h3>المتاجر المربوطة</h3>
+            <p>إدارة ربط المتاجر بالعلامات التجارية</p>
+        </a>
+
+        <a href="/admin/sku-rules" class="admin-card">
+            <div class="admin-card-icon">📋</div>
+            <h3>قواعد SKU</h3>
+            <p>إدارة قواعد تعيين المنتجات</p>
+        </a>
+
+        <a href="/admin/password" class="admin-card">
+            <div class="admin-card-icon">🔑</div>
+            <h3>تغيير كلمة المرور</h3>
+            <p>تحديث كلمة مرور المدير</p>
+        </a>
+
+        <a href="/" class="admin-card">
+            <div class="admin-card-icon">📊</div>
+            <h3>لوحة المعلومات</h3>
+            <p>تحليل طلبات العلامات التجارية</p>
+        </a>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <h2>العلامات التجارية المسجلة</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>الاسم بالعربي</th>
+                    <th>المعرف</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for brand in brands %}
+                <tr>
+                    <td>{{ brand.id }}</td>
+                    <td>{{ brand.name }}</td>
+                    <td>{{ brand.name_ar }}</td>
+                    <td><code>{{ brand.processor_key }}</code></td>
+                    <td>
+                        {% if brand.is_active %}
+                        <span class="badge badge-success">فعّال</span>
+                        {% else %}
+                        <span class="badge badge-muted">معطّل</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}تمكّن - المتاجر المربوطة{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>إدارة ربط المتاجر</h1>
+        <a href="/admin" class="btn btn-secondary">← العودة للوحة التحكم</a>
+    </div>
+
+    <!-- Add Form -->
+    <div class="card">
+        <h2>إضافة/تعديل ربط</h2>
+        <form method="POST" action="/admin/stores/add" class="inline-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>العلامة التجارية</label>
+                    <select name="brand_id" required>
+                        {% for brand in brands %}
+                        <option value="{{ brand.id }}">{{ brand.name_ar }} ({{ brand.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>اسم المتجر في الـ CRM</label>
+                    <input type="text" name="crm_store_name" required placeholder="مثال: بست شيلد">
+                </div>
+                <div class="form-group">
+                    <label>المعرف الخارجي (Postgres ID)</label>
+                    <input type="number" name="external_postgres_id" placeholder="مثال: 7">
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <input type="text" name="notes" placeholder="اختياري">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">حفظ إعدادات الربط</button>
+        </form>
+    </div>
+
+    <!-- Existing Mappings -->
+    <div class="card">
+        <h2>خريطة المتاجر المربوطة حالياً</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>المتجر (CRM)</th>
+                    <th>المعرف (Postgres ID)</th>
+                    <th>العلامة التجارية</th>
+                    <th>ملاحظات</th>
+                    <th>إدارة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in mappings %}
+                <tr>
+                    <td>{{ m.crm_store_name }}</td>
+                    <td>{{ m.external_postgres_id or '-' }}</td>
+                    <td>{{ m.brand.name_ar }}</td>
+                    <td>{{ m.notes or '-' }}</td>
+                    <td class="actions-cell">
+                        <button class="btn btn-sm btn-secondary"
+                                onclick="editMapping({{ m.id }}, '{{ m.crm_store_name }}', {{ m.external_postgres_id or 'null' }}, '{{ m.notes or '' }}')">
+                            تعديل
+                        </button>
+                        <form method="POST" action="/admin/stores/delete/{{ m.id }}" style="display:inline;"
+                              onsubmit="return confirm('هل أنت متأكد من الحذف؟')">
+                            <button type="submit" class="btn btn-sm btn-danger">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not mappings %}
+                <tr><td colspan="5" class="empty-state">لا توجد متاجر مربوطة بعد</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal" style="display:none;">
+        <div class="modal-card">
+            <h3>تعديل ربط المتجر</h3>
+            <form id="editForm" method="POST">
+                <div class="form-group">
+                    <label>اسم المتجر في الـ CRM</label>
+                    <input type="text" name="crm_store_name" id="editCrmName" required>
+                </div>
+                <div class="form-group">
+                    <label>المعرف الخارجي (Postgres ID)</label>
+                    <input type="number" name="external_postgres_id" id="editPgId">
+                </div>
+                <div class="form-group">
+                    <label>ملاحظات</label>
+                    <input type="text" name="notes" id="editNotes">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function editMapping(id, crmName, pgId, notes) {
+    document.getElementById('editForm').action = '/admin/stores/edit/' + id;
+    document.getElementById('editCrmName').value = crmName;
+    document.getElementById('editPgId').value = pgId || '';
+    document.getElementById('editNotes').value = notes;
+    document.getElementById('editModal').style.display = 'flex';
+}
+function closeModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+</script>
+{% endblock %}

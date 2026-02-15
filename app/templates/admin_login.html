@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}تمكّن - تسجيل الدخول{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-card">
+        <h2>تسجيل دخول المدير</h2>
+
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/admin/login">
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" name="email" required placeholder="example@tamakun.sa" dir="ltr">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">تسجيل الدخول</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

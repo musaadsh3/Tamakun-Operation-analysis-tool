@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}تمكّن - قواعد SKU{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>إدارة قواعد SKU</h1>
+        <a href="/admin" class="btn btn-secondary">← العودة للوحة التحكم</a>
+    </div>
+
+    <!-- Add Form -->
+    <div class="card">
+        <h2>إضافة قاعدة جديدة</h2>
+        <form method="POST" action="/admin/sku-rules/add" class="inline-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>العلامة التجارية</label>
+                    <select name="brand_id" required>
+                        {% for brand in brands %}
+                        <option value="{{ brand.id }}">{{ brand.name_ar }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>نمط SKU (Pattern)</label>
+                    <input type="text" name="sku_pattern" required placeholder="مثال: B\d{2} أو PPF_Q" dir="ltr">
+                </div>
+                <div class="form-group">
+                    <label>الحقل المستهدف</label>
+                    <input type="text" name="target_field" required placeholder="مثال: B70 أو ppf_q">
+                </div>
+                <div class="form-group">
+                    <label>المضاعف</label>
+                    <input type="number" name="multiplier" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>وصف</label>
+                    <input type="text" name="description" placeholder="وصف اختياري">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">إضافة قاعدة</button>
+        </form>
+    </div>
+
+    <!-- Rules Table -->
+    <div class="card">
+        <h2>القواعد الحالية</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>العلامة التجارية</th>
+                    <th>نمط SKU</th>
+                    <th>الحقل المستهدف</th>
+                    <th>المضاعف</th>
+                    <th>الوصف</th>
+                    <th>الحالة</th>
+                    <th>إدارة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rule in rules %}
+                <tr>
+                    <td>{{ rule.id }}</td>
+                    <td>{{ rule.brand.name_ar }}</td>
+                    <td dir="ltr"><code>{{ rule.sku_pattern }}</code></td>
+                    <td>{{ rule.target_field }}</td>
+                    <td>{{ rule.multiplier }}</td>
+                    <td>{{ rule.description or '-' }}</td>
+                    <td>
+                        {% if rule.is_active %}
+                        <span class="badge badge-success">فعّال</span>
+                        {% else %}
+                        <span class="badge badge-muted">معطّل</span>
+                        {% endif %}
+                    </td>
+                    <td class="actions-cell">
+                        <button class="btn btn-sm btn-secondary"
+                                onclick="editRule({{ rule.id }}, '{{ rule.sku_pattern }}', '{{ rule.target_field }}', {{ rule.multiplier }}, '{{ rule.description or '' }}', {{ 'true' if rule.is_active else 'false' }})">
+                            تعديل
+                        </button>
+                        <form method="POST" action="/admin/sku-rules/delete/{{ rule.id }}" style="display:inline;"
+                              onsubmit="return confirm('هل أنت متأكد من الحذف؟')">
+                            <button type="submit" class="btn btn-sm btn-danger">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not rules %}
+                <tr><td colspan="8" class="empty-state">لا توجد قواعد بعد</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal" style="display:none;">
+        <div class="modal-card">
+            <h3>تعديل قاعدة SKU</h3>
+            <form id="editForm" method="POST">
+                <div class="form-group">
+                    <label>نمط SKU</label>
+                    <input type="text" name="sku_pattern" id="editPattern" required dir="ltr">
+                </div>
+                <div class="form-group">
+                    <label>الحقل المستهدف</label>
+                    <input type="text" name="target_field" id="editTarget" required>
+                </div>
+                <div class="form-group">
+                    <label>المضاعف</label>
+                    <input type="number" name="multiplier" id="editMultiplier" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>وصف</label>
+                    <input type="text" name="description" id="editDescription">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="is_active" id="editActive" value="true">
+                        فعّال
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function editRule(id, pattern, target, multiplier, description, isActive) {
+    document.getElementById('editForm').action = '/admin/sku-rules/edit/' + id;
+    document.getElementById('editPattern').value = pattern;
+    document.getElementById('editTarget').value = target;
+    document.getElementById('editMultiplier').value = multiplier;
+    document.getElementById('editDescription').value = description;
+    document.getElementById('editActive').checked = isActive;
+    document.getElementById('editModal').style.display = 'flex';
+}
+function closeModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+</script>
+{% endblock %}

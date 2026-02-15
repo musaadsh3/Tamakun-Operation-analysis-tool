@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}تمكّن - الرئيسية{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero">
+        <h1>نظام إدارة الطلبات</h1>
+        <p>اختر العلامة التجارية لبدء تحليل الطلبات</p>
+    </div>
+
+    <div class="brands-grid">
+        {% for brand in brands %}
+        <a href="/dashboard/{{ brand.processor_key }}" class="brand-card">
+            <div class="brand-icon">📦</div>
+            <h3>{{ brand.name_ar }}</h3>
+            <p>{{ brand.name }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

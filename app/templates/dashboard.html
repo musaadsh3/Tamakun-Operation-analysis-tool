@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}تمكّن - {{ brand.name_ar }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ brand.name_ar }}</h1>
+        <a href="/" class="btn btn-secondary">← العودة للرئيسية</a>
+    </div>
+
+    <!-- Source Selection -->
+    <div class="card">
+        <h2>مصدر البيانات</h2>
+        <div class="source-tabs">
+            <button class="source-tab active" id="tabDb" onclick="switchSource('db')">من قاعدة البيانات</button>
+            <button class="source-tab" id="tabFile" onclick="switchSource('file')">رفع ملف Excel</button>
+        </div>
+
+        <!-- DB Mode -->
+        <div id="dbSection">
+            <div class="filters-row" style="margin-top:1rem;">
+                <div class="form-group">
+                    <label>حالة الطلب</label>
+                    <select id="statusFilter" multiple class="multi-select">
+                        {% for s in statuses %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                    <small>اترك فارغاً لعرض الكل</small>
+                </div>
+
+                <div class="form-group">
+                    <label>من تاريخ</label>
+                    <input type="date" id="dateFrom">
+                </div>
+
+                <div class="form-group">
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="dateTo">
+                </div>
+
+                <div class="form-group">
+                    <label>اختصارات التاريخ</label>
+                    <div class="date-presets">
+                        <button type="button" class="btn btn-sm" onclick="setDatePreset(7)">آخر أسبوع</button>
+                        <button type="button" class="btn btn-sm" onclick="setDatePreset(30)">آخر شهر</button>
+                        <button type="button" class="btn btn-sm" onclick="setDatePreset(0)">مخصص</button>
+                    </div>
+                    <div id="customDays" style="display:none; margin-top:8px;">
+                        <input type="number" id="customDaysInput" placeholder="عدد الأيام" min="1">
+                        <button type="button" class="btn btn-sm" onclick="applyCustomDays()">تطبيق</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary" id="dbProcessBtn" onclick="fetchFromDb()">تحليل من قاعدة البيانات</button>
+            </div>
+        </div>
+
+        <!-- File Mode -->
+        <div id="fileSection" style="display:none;">
+            <form id="uploadForm" style="margin-top:1rem;">
+                <div class="form-group">
+                    <label>ملف الطلبات (Excel / CSV)</label>
+                    <div class="file-drop-zone" id="dropZone">
+                        <input type="file" id="fileInput" name="file" accept=".xlsx,.xls,.csv">
+                        <p>اسحب الملف هنا أو اضغط للاختيار</p>
+                        <span class="file-name" id="fileName"></span>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">معالجة الملف</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loading" style="display:none;">
+        <div class="spinner"></div>
+        <p>جاري المعالجة...</p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" style="display:none;">
+        <div class="results-header">
+            <div class="stats-bar">
+                <span>إجمالي الطلبات: <strong id="totalRows">0</strong></span>
+                <span>بعد التصفية: <strong id="filteredRows">0</strong></span>
+            </div>
+            <div class="results-actions">
+                <button class="btn btn-primary" id="exportBtn" onclick="exportExcel()">تصدير إلى Excel</button>
+            </div>
+        </div>
+
+        <div id="tablesContainer"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/dashboard.js"></script>
+<script>
+    window.BRAND_KEY = "{{ brand.processor_key }}";
+</script>
+{% endblock %}

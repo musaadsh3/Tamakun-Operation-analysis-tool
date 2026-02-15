@@ -1,0 +1,12 @@
+# cPanel deployment requirements (includes WSGI bridge + MySQL driver)
+fastapi==0.115.6
+uvicorn==0.34.0
+python-multipart==0.0.20
+jinja2==3.1.5
+sqlalchemy==2.0.36
+pandas==2.2.3
+openpyxl==3.1.5
+aiofiles==24.1.0
+a2wsgi==1.10.8
+pymysql==1.1.1
+python-dotenv==1.0.1

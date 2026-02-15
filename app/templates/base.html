@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}تمكّن{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <span class="brand-text">تمكّن</span>
+                <span class="brand-sub">TAMAKUN</span>
+            </a>
+            <div class="nav-links">
+                <a href="/">الرئيسية</a>
+                {% if admin %}
+                    <a href="/admin">لوحة التحكم</a>
+                    <a href="/admin/stores">المتاجر المربوطة</a>
+                    <a href="/admin/sku-rules">قواعد SKU</a>
+                    <a href="/admin/logout" class="btn-logout">تسجيل خروج</a>
+                {% else %}
+                    <a href="/admin/login">دخول المدير</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>تمكّن - نظام إدارة المتاجر &copy; 2024</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
