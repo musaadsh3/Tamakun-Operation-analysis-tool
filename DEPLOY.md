@@ -78,7 +78,7 @@ python run.py
 | المتغير | القيمة |
 |---------|--------|
 | `SECRET_KEY` | مفتاح سري طويل وعشوائي |
-| `DATABASE_URL` | `mysql+pymysql://user:pass@localhost/dbname` |
+| `DATABASE_URL` | `postgresql://operationtamakun_operation_user:PASSWORD@localhost/operationtamakun_operation` |
 | `EXTERNAL_DB_HOST` | `37.27.130.230` |
 | `EXTERNAL_DB_PORT` | `5432` |
 | `EXTERNAL_DB_USERNAME` | `ingest_user` |
