@@ -41,7 +41,7 @@ def fetch_order_statuses(brand_key: str) -> List[str]:
     try:
         cur = conn.cursor()
         cur.execute(
-            "SELECT DISTINCT status_name FROM orders WHERE store_id = %s AND status_name IS NOT NULL ORDER BY status_name",
+            "SELECT DISTINCT status_name FROM orders WHERE store_id = %s AND status_name IS NOT NULL ORDER BY (status_name ~ '^[a-zA-Z]'), status_name",
             (store_id,)
         )
         return [row[0] for row in cur.fetchall()]
