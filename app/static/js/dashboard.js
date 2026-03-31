@@ -230,12 +230,17 @@ function renderResults(data) {
         const tbody = document.createElement('tbody');
         table.rows.forEach((rowData, rowIdx) => {
             const tr = document.createElement('tr');
+            const isTotalsRow = rowData[table.columns[0]] === 'المجموع';
+            if (isTotalsRow) {
+                tr.style.fontWeight = 'bold';
+                tr.style.backgroundColor = '#f0f0f0';
+            }
             table.columns.forEach((col, colIdx) => {
                 const td = document.createElement('td');
                 td.textContent = rowData[col] !== undefined ? rowData[col] : '';
 
-                // Make numeric cells editable (skip first column = label)
-                if (colIdx > 0) {
+                // Make numeric cells editable (skip first column = label and totals row)
+                if (colIdx > 0 && !isTotalsRow) {
                     td.contentEditable = 'true';
                     td.dataset.tableIdx = tableIdx;
                     td.dataset.rowIdx = rowIdx;
