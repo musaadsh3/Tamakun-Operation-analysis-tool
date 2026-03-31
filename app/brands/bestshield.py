@@ -460,6 +460,13 @@ class BestShieldProcessor(BaseBrandProcessor):
                 "عدد رولات التظليل": roll_pkg[vlt],
                 "النسبة المئوية": self._safe_pct(roll_pkg[vlt], total_tint_rolls),
             })
+        # Add total row
+        tint_roll_rows.append({
+            "VLT": "المجموع",
+            "عدد الامتار للتظليل": sum(combined_result.values()),
+            "عدد رولات التظليل": round(total_tint_rolls, 1),
+            "النسبة المئوية": 100.0,
+        })
         tables.append({
             "title": "رولات التظليل",
             "columns": ["VLT", "عدد الامتار للتظليل", "عدد رولات التظليل", "النسبة المئوية"],
@@ -486,6 +493,13 @@ class BestShieldProcessor(BaseBrandProcessor):
                 "عدد الرولات B2B": roll_pkg_b2b[vlt],
                 "النسبة المئوية": self._safe_pct(roll_pkg_b2b[vlt], total_tint_rolls_b2b),
             })
+        # Add total row
+        tint_roll_b2b_rows.append({
+            "VLT": "المجموع",
+            "عدد الامتار B2B": sum(combined_result_b2b.values()),
+            "عدد الرولات B2B": round(total_tint_rolls_b2b, 1),
+            "النسبة المئوية": 100.0,
+        })
         tables.append({
             "title": "رولات التظليل B2B",
             "columns": ["VLT", "عدد الامتار B2B", "عدد الرولات B2B", "النسبة المئوية"],
