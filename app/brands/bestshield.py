@@ -452,6 +452,7 @@ class BestShieldProcessor(BaseBrandProcessor):
         total_tint_rolls = sum(roll_pkg.values())
 
         tint_roll_rows = []
+        total_tint_meters = 0
         for sz in sizes:
             vlt = int(sz)
             tint_roll_rows.append({
@@ -460,6 +461,14 @@ class BestShieldProcessor(BaseBrandProcessor):
                 "عدد رولات التظليل": roll_pkg[vlt],
                 "النسبة المئوية": self._safe_pct(roll_pkg[vlt], total_tint_rolls),
             })
+            total_tint_meters += combined_result[vlt]
+        # Add totals row
+        tint_roll_rows.append({
+            "VLT": "المجموع",
+            "عدد الامتار للتظليل": total_tint_meters,
+            "عدد رولات التظليل": round(total_tint_rolls, 1),
+            "النسبة المئوية": 100.0,
+        })
         tables.append({
             "title": "رولات التظليل",
             "columns": ["VLT", "عدد الامتار للتظليل", "عدد رولات التظليل", "النسبة المئوية"],
@@ -478,6 +487,7 @@ class BestShieldProcessor(BaseBrandProcessor):
         total_tint_rolls_b2b = sum(roll_pkg_b2b.values())
 
         tint_roll_b2b_rows = []
+        total_tint_meters_b2b = 0
         for sz in sizes:
             vlt = int(sz)
             tint_roll_b2b_rows.append({
@@ -486,6 +496,14 @@ class BestShieldProcessor(BaseBrandProcessor):
                 "عدد الرولات B2B": roll_pkg_b2b[vlt],
                 "النسبة المئوية": self._safe_pct(roll_pkg_b2b[vlt], total_tint_rolls_b2b),
             })
+            total_tint_meters_b2b += combined_result_b2b[vlt]
+        # Add totals row
+        tint_roll_b2b_rows.append({
+            "VLT": "المجموع",
+            "عدد الامتار B2B": total_tint_meters_b2b,
+            "عدد الرولات B2B": round(total_tint_rolls_b2b, 1),
+            "النسبة المئوية": 100.0,
+        })
         tables.append({
             "title": "رولات التظليل B2B",
             "columns": ["VLT", "عدد الامتار B2B", "عدد الرولات B2B", "النسبة المئوية"],
