@@ -1,0 +1,60 @@
+[Unit]
+Description=Tamakun SaaS (FastAPI / operation.tamakun.sa)
+After=network-online.target postgresql-14.service
+Wants=network-online.target
+Requires=postgresql-14.service
+
+[Service]
+Type=simple
+User=tamakunsaas
+Group=tamakunsaas
+WorkingDirectory=/opt/tamakun-saas
+EnvironmentFile=/opt/tamakun-saas/.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+RuntimeDirectory=tamakun-saas
+RuntimeDirectoryMode=0750
+UMask=0027
+
+ExecStart=/opt/tamakun-saas/venv/bin/gunicorn \
+    -k uvicorn.workers.UvicornWorker \
+    -w 3 \
+    --bind unix:/run/tamakun-saas/tamakun-saas.sock \
+    --umask 7 \
+    --access-logfile - \
+    --error-logfile - \
+    --timeout 120 \
+    --graceful-timeout 30 \
+    app.main:app
+
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/tamakun-saas /run/tamakun-saas /opt/tamakun-saas
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+RemoveIPC=true
+PrivateDevices=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target
