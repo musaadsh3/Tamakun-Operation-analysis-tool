@@ -12,3 +12,9 @@ dist/
 build/
 .venv/
 venv/
+
+# Deployment artifacts (contain secrets, do NOT commit)
+.deploy_ssh.py
+.deploy_make_tarball.py
+.deploy_secrets/
+.claude/
