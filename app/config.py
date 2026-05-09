@@ -13,12 +13,12 @@ class Settings:
         f"sqlite:///{BASE_DIR / 'tamakun.db'}"
     )
 
-    # External Postgres (Salla ingest DB)
-    EXTERNAL_DB_HOST: str = os.getenv("EXTERNAL_DB_HOST", "37.27.130.230")
+    # External Postgres (Salla ingest DB) — values come from .env, no defaults committed.
+    EXTERNAL_DB_HOST: str = os.getenv("EXTERNAL_DB_HOST", "")
     EXTERNAL_DB_PORT: str = os.getenv("EXTERNAL_DB_PORT", "5432")
-    EXTERNAL_DB_USERNAME: str = os.getenv("EXTERNAL_DB_USERNAME", "ingest_user")
-    EXTERNAL_DB_PASSWORD: str = os.getenv("EXTERNAL_DB_PASSWORD", "27nQ8Bi1ur")
-    EXTERNAL_DB_NAME: str = os.getenv("EXTERNAL_DB_NAME", "ingest_tamakun")
+    EXTERNAL_DB_USERNAME: str = os.getenv("EXTERNAL_DB_USERNAME", "")
+    EXTERNAL_DB_PASSWORD: str = os.getenv("EXTERNAL_DB_PASSWORD", "")
+    EXTERNAL_DB_NAME: str = os.getenv("EXTERNAL_DB_NAME", "")
     EXTERNAL_DB_TYPE: str = os.getenv("EXTERNAL_DB_TYPE", "postgres")
     EXTERNAL_USE_SSL: bool = os.getenv("EXTERNAL_USE_SSL", "false").lower() == "true"
 

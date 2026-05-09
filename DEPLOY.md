@@ -79,11 +79,11 @@ python run.py
 |---------|--------|
 | `SECRET_KEY` | مفتاح سري طويل وعشوائي |
 | `DATABASE_URL` | `postgresql://operationtamakun_operation_user:PASSWORD@localhost/operationtamakun_operation` |
-| `EXTERNAL_DB_HOST` | `37.27.130.230` |
+| `EXTERNAL_DB_HOST` | `<from your DBA>` |
 | `EXTERNAL_DB_PORT` | `5432` |
-| `EXTERNAL_DB_USERNAME` | `ingest_user` |
-| `EXTERNAL_DB_PASSWORD` | `27nQ8Bi1ur` |
-| `EXTERNAL_DB_NAME` | `ingest_tamakun` |
+| `EXTERNAL_DB_USERNAME` | `<from your DBA>` |
+| `EXTERNAL_DB_PASSWORD` | `<from your DBA>` |
+| `EXTERNAL_DB_NAME` | `<from your DBA>` |
 
 أو أنشئ ملف `.env` في مجلد المشروع.
 
