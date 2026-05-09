@@ -745,8 +745,8 @@ class BestShieldProcessor(BaseBrandProcessor):
             "title": "داش كام",
             "columns": ["النوع", "الكمية"],
             "rows": [
-                {"النوع": "B2C (DC-4K-W_obd)", "الكمية": c["dashCam"]},
-                {"النوع": "B2B (B2B_DC-4K-W)", "الكمية": c["dashCam_b2b"]},
+                {"النوع": "B2C", "الكمية": c["dashCam"]},
+                {"النوع": "B2B", "الكمية": c["dashCam_b2b"]},
             ],
         })
 
@@ -795,8 +795,8 @@ class BestShieldProcessor(BaseBrandProcessor):
             "title": "الرافعة",
             "columns": ["النوع", "الكمية"],
             "rows": [
-                {"النوع": "B2C (Car_Jack_5_ton)", "الكمية": c["car_jack"]},
-                {"النوع": "B2B (B2B_Car_Jack_5_ton)", "الكمية": c["car_jack_b2b"]},
+                {"النوع": "B2C", "الكمية": c["car_jack"]},
+                {"النوع": "B2B", "الكمية": c["car_jack_b2b"]},
             ],
         })
 
