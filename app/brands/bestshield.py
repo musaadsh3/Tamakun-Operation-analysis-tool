@@ -123,6 +123,8 @@ class BestShieldProcessor(BaseBrandProcessor):
         brake_front = 0
         brake_rear = 0
         dashCam = 0
+        car_jack = 0
+        dies: Dict[str, int] = {}
 
         # ── B2B counters ──
         B_b2b = {f'B{n}': 0 for n in numbers}
@@ -141,6 +143,9 @@ class BestShieldProcessor(BaseBrandProcessor):
         TINT_BOX_FORGET_b2b = 0
         brake_front_b2b = 0
         brake_rear_b2b = 0
+        dashCam_b2b = 0
+        car_jack_b2b = 0
+        dies_b2b: Dict[str, int] = {}
 
         # ── Old SKU mappings ──
         B_old = {"B00": "B70", "B01": "B50", "B02": "B35", "B03": "B20"}
@@ -249,6 +254,22 @@ class BestShieldProcessor(BaseBrandProcessor):
                     protect_shield += qty
                 continue
 
+            # ── Dash cam B2C: DC-4K-W_obd ──
+            # B2B variant comes through as a single-item ["DC-4K-W"] after the
+            # B2B_ prefix is stripped above; that branch is in the len==1 block.
+            if j == ["DC-4K-W", "obd"]:
+                if not is_b2b:
+                    dashCam += qty
+                continue
+
+            # ── Car Jack 5-ton: Car_Jack_5_ton (also B2B_Car_Jack_5_ton) ──
+            if j == ["Car", "Jack", "5", "ton"]:
+                if is_b2b:
+                    car_jack_b2b += qty
+                else:
+                    car_jack += qty
+                continue
+
             # ── Single item SKUs (len == 1) ──
             if len(j) == 1:
                 item = j[0]
@@ -287,12 +308,19 @@ class BestShieldProcessor(BaseBrandProcessor):
                         ppf_b2b["ppf_e"] += qty
                     elif item == "ppf_f":
                         ppf_b2b["ppf_f"] += qty
-                    elif re.match(r'^D\d+-(F|R)-\d+$', item):
-                        side = re.findall(r'^D\d+-(F|R)-\d+$', item)[0]
-                        if side == "F":
-                            brake_front_b2b += qty
-                        else:
-                            brake_rear_b2b += qty
+                    elif item == "DC-4K-W":
+                        # B2B_DC-4K-W → ["B2B","DC-4K-W"] → after strip ["DC-4K-W"]
+                        dashCam_b2b += qty
+                    else:
+                        m = re.match(r'^D(\d+)-(F|R)-\d+$', item)
+                        if m:
+                            die_num, side = m.groups()
+                            if side == "F":
+                                brake_front_b2b += qty
+                            else:
+                                brake_rear_b2b += qty
+                            die_code = f"D{die_num}"
+                            dies_b2b[die_code] = dies_b2b.get(die_code, 0) + qty
                 else:
                     if item in B:
                         B[item] += qty
@@ -312,12 +340,6 @@ class BestShieldProcessor(BaseBrandProcessor):
                             t_key = f'T{t_val}'
                             if h_val in H_dict and t_key in H_dict[h_val]:
                                 H_dict[h_val][t_key] += qty
-                    elif re.match(r'^D\d+-(F|R)-\d+$', item):
-                        side = re.findall(r'^D\d+-(F|R)-\d+$', item)[0]
-                        if side == "F":
-                            brake_front += qty
-                        else:
-                            brake_rear += qty
                     elif item in ["SPR03", "SPR3"]:
                         SPRO3 += qty
                     elif item == "CARD":
@@ -334,8 +356,16 @@ class BestShieldProcessor(BaseBrandProcessor):
                         ppf["ppf_e"] += qty
                     elif item == "ppf_f":
                         ppf["ppf_f"] += qty
-                    elif item == "DC-4K-W":
-                        dashCam += qty
+                    else:
+                        m = re.match(r'^D(\d+)-(F|R)-\d+$', item)
+                        if m:
+                            die_num, side = m.groups()
+                            if side == "F":
+                                brake_front += qty
+                            else:
+                                brake_rear += qty
+                            die_code = f"D{die_num}"
+                            dies[die_code] = dies.get(die_code, 0) + qty
                 continue
 
         # Rename T5 -> T05 for consistency in output
@@ -350,7 +380,7 @@ class BestShieldProcessor(BaseBrandProcessor):
             "SPRO3": SPRO3, "mic3": mic3, "CLNo3": CLNo3,
             "TINT_BOX_FORGET": TINT_BOX_FORGET,
             "brake_front": brake_front, "brake_rear": brake_rear,
-            "dashCam": dashCam,
+            "dashCam": dashCam, "car_jack": car_jack, "dies": dies,
             "pdz": pdz, "I": I_count, "II": II_count,
             "BR": BR, "SR": SR, "HH": HH,
             # B2B
@@ -361,6 +391,8 @@ class BestShieldProcessor(BaseBrandProcessor):
             "CLNo3_b2b": CLNo3_b2b,
             "TINT_BOX_FORGET_b2b": TINT_BOX_FORGET_b2b,
             "brake_front_b2b": brake_front_b2b, "brake_rear_b2b": brake_rear_b2b,
+            "dashCam_b2b": dashCam_b2b, "car_jack_b2b": car_jack_b2b,
+            "dies_b2b": dies_b2b,
             "pdz_b2b": pdz_b2b, "I_b2b": I_b2b, "II_b2b": II_b2b,
             "BR_b2b": BR_b2b, "SR_b2b": SR_b2b, "HH_b2b": HH_b2b,
         }
@@ -707,12 +739,15 @@ class BestShieldProcessor(BaseBrandProcessor):
         })
 
         # ════════════════════════════════════════════════════════
-        # 17. داش كام
+        # 17. داش كام (B2C: DC-4K-W_obd, B2B: B2B_DC-4K-W)
         # ════════════════════════════════════════════════════════
         tables.append({
             "title": "داش كام",
-            "columns": ["داش كام"],
-            "rows": [{"داش كام": c["dashCam"]}],
+            "columns": ["النوع", "الكمية"],
+            "rows": [
+                {"النوع": "B2C (DC-4K-W_obd)", "الكمية": c["dashCam"]},
+                {"النوع": "B2B (B2B_DC-4K-W)", "الكمية": c["dashCam_b2b"]},
+            ],
         })
 
         # ════════════════════════════════════════════════════════
@@ -726,6 +761,43 @@ class BestShieldProcessor(BaseBrandProcessor):
                 "فحمات خلفية": c["brake_rear"],
                 "المجموع": c["brake_front"] + c["brake_rear"],
             }],
+        })
+
+        # ════════════════════════════════════════════════════════
+        # 18b. الدايات (Die codes that appeared in the brake SKUs above)
+        # ════════════════════════════════════════════════════════
+        combined_dies: Dict[str, int] = {}
+        for d, q in c["dies"].items():
+            combined_dies[d] = combined_dies.get(d, 0) + q
+        for d, q in c["dies_b2b"].items():
+            combined_dies[d] = combined_dies.get(d, 0) + q
+
+        def _die_sort_key(name: str):
+            m = re.match(r'^D(\d+)', name)
+            return int(m.group(1)) if m else 10**9
+
+        die_rows = [
+            {"الداي": d, "الكمية": q}
+            for d, q in sorted(combined_dies.items(), key=lambda kv: _die_sort_key(kv[0]))
+        ]
+        if not die_rows:
+            die_rows = [{"الداي": "—", "الكمية": 0}]
+        tables.append({
+            "title": "الدايات",
+            "columns": ["الداي", "الكمية"],
+            "rows": die_rows,
+        })
+
+        # ════════════════════════════════════════════════════════
+        # 18c. الرافعة (Car Jack — sits just above منتجات خاصة)
+        # ════════════════════════════════════════════════════════
+        tables.append({
+            "title": "الرافعة",
+            "columns": ["النوع", "الكمية"],
+            "rows": [
+                {"النوع": "B2C (Car_Jack_5_ton)", "الكمية": c["car_jack"]},
+                {"النوع": "B2B (B2B_Car_Jack_5_ton)", "الكمية": c["car_jack_b2b"]},
+            ],
         })
 
         # ════════════════════════════════════════════════════════
