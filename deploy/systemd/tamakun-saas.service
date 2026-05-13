@@ -1,8 +1,11 @@
 [Unit]
 Description=Tamakun SaaS (FastAPI / operation.tamakun.sa)
 After=network-online.target postgresql-14.service
-Wants=network-online.target
-Requires=postgresql-14.service
+Wants=network-online.target postgresql-14.service
+# Wants= (not Requires=) on Postgres so a slow boot — e.g., Postgres failing
+# the first 4–5 start attempts before succeeding, as observed on this host —
+# doesn't abort our service permanently. Combined with Restart=on-failure
+# below, the service will keep retrying until the DB is reachable.
 
 [Service]
 Type=simple

@@ -777,14 +777,14 @@ class BestShieldProcessor(BaseBrandProcessor):
             return int(m.group(1)) if m else 10**9
 
         die_rows = [
-            {"الداي": d, "الكمية": q}
+            {"DIE": d, "الكمية": q}
             for d, q in sorted(combined_dies.items(), key=lambda kv: _die_sort_key(kv[0]))
         ]
         if not die_rows:
-            die_rows = [{"الداي": "—", "الكمية": 0}]
+            die_rows = [{"DIE": "—", "الكمية": 0}]
         tables.append({
-            "title": "الدايات",
-            "columns": ["الداي", "الكمية"],
+            "title": "DIEs",
+            "columns": ["DIE", "الكمية"],
             "rows": die_rows,
         })
 
